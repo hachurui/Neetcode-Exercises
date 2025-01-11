@@ -1,0 +1,110 @@
+class Node {
+public:
+    int value;
+    Node* next;
+
+    Node(int val)
+    {
+        value = val;
+        next = nullptr;
+    }
+};
+class LinkedList {
+public:
+    Node* head; //will be a dummynode, the first real node of the list will be head->next
+    Node* tail; //NOT a dummytail, tail is the last real node of the list
+    LinkedList() {
+        head = new Node(-1); //dummyhead
+        tail = head; //currently, even as a dummy node, tail is the last node. head will never change,
+        //tail will change when a new node is added
+    }
+
+    int get(int index) {
+        Node* currNode = head->next;
+        int i = 0;
+        //could check if i > 0, logically dont need to, the while loop will end regardless
+        while(currNode != nullptr && i != index) //advance through list until we reach the end or reach the desired index
+        {
+            currNode = currNode->next;
+            i++;
+        }
+        if(currNode == nullptr) //if we reached the end of the list/index isn't in list
+        {
+            return -1;
+        }
+        else //if we reach the corresponding index and its not nullptr
+        {
+            return currNode->value;
+        }
+    }
+
+    void insertHead(int val) { //the head in practice is head->next since head is a dummynode
+        Node* oldHead = head->next; //grab old head, make new head, then set newhead as first element and oldhead to be the enxt element after
+        Node* newHead = new Node(val);
+        head->next = newHead;
+        newHead->next = oldHead;
+        if(tail == head)
+        {
+            tail = head->next;
+        }
+    }
+    
+    void insertTail(int val) {
+        Node* oldTail = tail;
+        Node* newTail = new Node(val);
+        oldTail->next = newTail;
+        tail = newTail;
+    }
+
+    bool remove(int index) { //can only remove a node if we have access to the one before it as we can't go backwards in a singly linked list
+        Node* currNode = head->next;
+        if(currNode == nullptr)
+        {
+            return false;
+        }
+        if(index == 0) //delete first node of list
+        {
+            Node* deleteNode = head->next;
+            head->next = head->next->next;
+            if(head->next == nullptr)
+            {
+                tail = head;
+            }
+            delete deleteNode;
+            return true;
+        }
+        int i = 0;
+        while(currNode->next != nullptr && i + 1 != index)//until we reach the node before the one to remove or the next node doesnt exist
+        {
+            currNode = currNode->next;
+            i++;
+        }
+        if(currNode->next == nullptr)//if the next point doesnt exist and cant be delete
+        {
+            return false;
+        }
+        else
+        {
+            Node* deleteNode = currNode->next;
+            currNode->next = currNode->next->next;
+            delete deleteNode;
+            if(currNode->next == nullptr)
+            {
+                tail = currNode;
+            }
+            return true;
+        }
+        
+    }
+
+    vector<int> getValues() {
+        Node* currNode = head->next;
+        vector<int> vecResult;
+        while(currNode != nullptr)
+        {
+            vecResult.push_back(currNode->value);
+            currNode = currNode->next;
+        }
+        return vecResult;
+    }
+};
